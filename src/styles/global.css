@@ -277,6 +277,7 @@ input:focus, textarea:focus { border-color: var(--c-primary); }
 
 .qty-btn--plus { color: var(--c-primary); }
 .qty-btn--minus { color: var(--c-danger); }
+.qty-btn--delete { color: var(--c-muted); font-size: 18px; }
 
 .qty-btn:active { background: var(--c-bg); transform: scale(.92); }
 .qty-btn:disabled { opacity: .3; }

@@ -8,6 +8,7 @@ import {
   serverTimestamp,
 } from 'firebase/firestore';
 import { db } from '../firebase';
+import { saveBarcode } from '../lib/barcodeCache';
 
 export default function ItemForm({ item, prefill, categories, onClose }) {
   const isEdit = !!item;
@@ -36,6 +37,10 @@ export default function ItemForm({ item, prefill, categories, onClose }) {
       await updateDoc(doc(db, 'items', item.id), data);
     } else {
       await addDoc(collection(db, 'items'), { ...data, createdAt: serverTimestamp() });
+    }
+    // Cache the barcode → name so future scans of this product fill in instantly
+    if (data.barcode && data.name) {
+      saveBarcode(data.barcode, data.name, data.category);
     }
     onClose();
   }

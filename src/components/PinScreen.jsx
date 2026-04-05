@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../hooks/useAuth.jsx';
 
 const KEYS = ['1','2','3','4','5','6','7','8','9','','0','⌫'];
 const PIN_LENGTH = 4;
@@ -7,7 +7,7 @@ const PIN_LENGTH = 4;
 export default function PinScreen() {
   const { pinExists, verify, setup, error } = useAuth();
   const [digits, setDigits] = useState([]);
-  const [confirm, setConfirm] = useState(null); // for setup flow
+  const [confirm, setConfirm] = useState(null);
   const [confirmDigits, setConfirmDigits] = useState([]);
   const [localError, setLocalError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -33,11 +33,9 @@ export default function PinScreen() {
 
     if (isSetup) {
       if (confirm === null) {
-        // First entry — ask to confirm
         setConfirm(pin);
         setConfirmDigits([]);
       } else {
-        // Confirmation entry
         if (pin !== confirm) {
           setLocalError("PINs don't match. Start again.");
           setConfirm(null);
@@ -46,6 +44,7 @@ export default function PinScreen() {
         } else {
           setSubmitting(true);
           await setup(pin);
+          setSubmitting(false);
         }
       }
     } else {
@@ -63,15 +62,24 @@ export default function PinScreen() {
   );
 
   const title = isSetup
-    ? confirm === null
-      ? 'Set your PIN'
-      : 'Confirm PIN'
+    ? confirm === null ? 'Set your PIN' : 'Confirm PIN'
     : 'Enter PIN';
+
+  // Show a loading state while checking Firestore for existing PIN
+  if (pinExists === null) {
+    return (
+      <div className="pin-screen">
+        <div className="pin-logo">🛒</div>
+        <h1 className="pin-title">Shelfie</h1>
+        <p className="pin-subtitle" style={{ color: 'var(--c-muted)' }}>Loading…</p>
+      </div>
+    );
+  }
 
   return (
     <div className="pin-screen">
       <div className="pin-logo">🛒</div>
-      <h1 className="pin-title">StockWatcher</h1>
+      <h1 className="pin-title">Shelfie</h1>
       <p className="pin-subtitle">{title}</p>
 
       <div className="pin-dots">
@@ -88,11 +96,11 @@ export default function PinScreen() {
         {KEYS.map((k, i) => (
           <button
             key={i}
-            className={`pin-key ${k === '' ? 'pin-key--empty' : ''}`}
+            className={`pin-key ${k === '' ? 'pin-key--empty' : ''} ${submitting ? 'pin-key--loading' : ''}`}
             onClick={() => handleKey(k)}
             disabled={submitting || (k !== '⌫' && k !== '' && current.length >= PIN_LENGTH)}
           >
-            {k}
+            {submitting && k === '0' ? '…' : k}
           </button>
         ))}
       </div>

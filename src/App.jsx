@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { useAuth } from './hooks/useAuth';
+import { useAuth } from './hooks/useAuth.jsx';
 import { useInventory } from './hooks/useInventory';
 import PinScreen from './components/PinScreen';
 import InventoryList from './components/InventoryList';
@@ -9,7 +9,7 @@ import BarcodeScanner from './components/BarcodeScanner';
 export default function App() {
   const { verified } = useAuth();
   const { items } = useInventory();
-  const [screen, setScreen] = useState(null); // null | 'add' | 'edit' | 'scan'
+  const [screen, setScreen] = useState(null);
   const [editItem, setEditItem] = useState(null);
   const [prefill, setPrefill] = useState(null);
 

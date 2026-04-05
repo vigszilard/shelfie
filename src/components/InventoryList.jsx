@@ -30,7 +30,7 @@ export default function InventoryList({ onAdd, onEdit, onScan }) {
   return (
     <div className="inventory">
       <header className="top-bar">
-        <h1 className="app-title">StockWatcher</h1>
+        <h1 className="app-title">Shelfie</h1>
         <div className="top-bar-actions">
           <button className="icon-btn" onClick={() => setShowSearch((s) => !s)} aria-label="Search">
             🔍

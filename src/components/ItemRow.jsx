@@ -1,4 +1,4 @@
-import { doc, updateDoc, increment, serverTimestamp } from 'firebase/firestore';
+import { doc, updateDoc, deleteDoc, increment, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 
 function categoryColor(cat) {
@@ -18,10 +18,17 @@ export default function ItemRow({ item, onEdit }) {
     });
   }
 
+  async function handleDelete(e) {
+    e.stopPropagation();
+    if (confirm(`Delete "${item.name}"?`)) {
+      await deleteDoc(doc(db, 'items', item.id));
+    }
+  }
+
   const depleted = item.quantity === 0;
 
   return (
-    <div className={`item-row ${depleted ? 'item-row--depleted' : ''}`} onClick={onEdit}>
+    <div className={`item-row ${depleted ? 'item-row--depleted' : ''}`}>
       {item.category && (
         <span
           className="item-category-dot"
@@ -29,11 +36,20 @@ export default function ItemRow({ item, onEdit }) {
           title={item.category}
         />
       )}
-      <div className="item-info">
+      <div className="item-info" onClick={onEdit}>
         <span className="item-name">{item.name}</span>
         {item.category && <span className="item-category">{item.category}</span>}
       </div>
-      <div className="item-controls" onClick={(e) => e.stopPropagation()}>
+      <div className="item-controls">
+        {depleted && (
+          <button
+            className="qty-btn qty-btn--delete"
+            onClick={handleDelete}
+            aria-label="Delete item"
+          >
+            🗑
+          </button>
+        )}
         <button
           className="qty-btn qty-btn--minus"
           onClick={() => changeQty(-1)}
