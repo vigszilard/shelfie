@@ -1,0 +1,13 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // PIN document — open access, it's a household app, PIN is friction not a security boundary
+    match /config/pin {
+      allow read, write: if true;
+    }
+    // Inventory items
+    match /items/{itemId} {
+      allow read, write: if true;
+    }
+  }
+}
